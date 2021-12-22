@@ -1,0 +1,30 @@
+.navbar {
+    background-color: #0e2439;
+}
+
+.brand {
+    color: #9cb3c9;
+}
+
+.navbar-toggler-icon {
+    background-color: white;
+}
+
+.nav-link {
+    color: #9cb3c9 !important;
+    font-size: 1.01rem;
+    font-weight: 600;
+}
+
+.search-field {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.btn-outline-success:hover {
+    background-color: blueviolet !important;
+}
+
+.active {
+    color: white !important;
+}

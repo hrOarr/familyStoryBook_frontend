@@ -1,0 +1,18 @@
+
+.rd3t-tree-container {
+    position: relative;
+}
+
+.rd3t-g {
+    position: absolute;
+    padding: 0 auto;
+}
+
+.rd3t-node {
+    fill: white !important;
+    stroke: whitesmoke !important;
+}
+
+.modal-content {
+    padding: 10px;
+}

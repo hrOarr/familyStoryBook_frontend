@@ -1,0 +1,16 @@
+.form-select {
+    color: #4d4d4d !important;
+    font-size: 17px !important;
+    border-radius: 3px !important;
+    padding: 8px !important;
+}
+
+.memberFormSubmit {
+    background-color: #E81E47 !important;
+    border-color: #E81E47 !important;
+}
+
+.memberFormSubmit:hover {
+    background-color: #4799eb !important;
+    border-color: #4799eb !important;
+}
