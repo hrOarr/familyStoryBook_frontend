@@ -1,0 +1,13 @@
+
+.nav {
+    text-align: center !important;
+}
+
+.nav-tabs {
+    border-bottom: none !important;
+}
+
+.nav-item .active {
+    background-color: #334861 !important;
+    border: none;
+}

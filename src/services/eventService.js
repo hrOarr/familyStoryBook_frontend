@@ -7,7 +7,7 @@ const getConfig = () => {
     headers: {
       'Content-Type': 'application/json',
       Authorization:
-        "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5nQGdtYWlsLmNvbSIsImV4cCI6MTY0MTg1NTI5NSwiaWF0IjoxNjM5ODU3Mjk1fQ.6kH9Dkc37UZYlTfJtzKwqxZIZcKmAz3IbJRnWv_u20xa3SGhGM2fNf7J2wOuaq1rjYgT0kv_gFxHr6wlMCxULA",
+        "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5nQGdtYWlsLmNvbSIsImV4cCI6MTY0NDE1OTc4NCwiaWF0IjoxNjQyMTYxNzg0fQ.k7oKLsgFdq7jIrlFg0pZ_BBNJ_3NFjsEb0rcfa3fqVtkZ4uSHRre92SL3wWjhZdzRO88VwXTREA9WhIrOO_Xyg",
     },
   };
   return config;

@@ -1,0 +1,12 @@
+
+.educationList {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.educationCard {
+    background-color: #334861;
+    margin: 6px;
+    padding: 15px;
+    border-radius: 6px;
+}

@@ -3,7 +3,6 @@ import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { addNewEvent, updateEvent } from "../services/eventService";
 import "./eventForm.css";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EventForm = (props) => {
@@ -26,10 +25,12 @@ const EventForm = (props) => {
     setState({ ...state, [name]: value });
   };
 
+  console.log(state)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    state.eventDateTime = state.eventDateTime.toISOString().split("T")[0];
+    state.eventDateTime = new Date(state.eventDateTime).toISOString().substring(0, 10);
 
     console.log(state.eventDateTime);
 
