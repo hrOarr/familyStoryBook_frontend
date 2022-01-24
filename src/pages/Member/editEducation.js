@@ -10,7 +10,7 @@ const EditEducation = () => {
   useEffect(async ()=>{
     await getEducationForEdit(educationId, memberId, 8)
     .then((res)=>{
-      console.log(res);
+      console.log("Success:: ", res);
       setEducation(res);
     })
     .catch((err)=>{

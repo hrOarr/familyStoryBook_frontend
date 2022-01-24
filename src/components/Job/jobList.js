@@ -3,16 +3,18 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { getAll, deleteJob } from "../../services/jobService";
+import { useAuthState } from '../../Context';
 import moment from "moment";
 import "./jobList.css";
 
 const EducationList = () => {
   const [jobs, setJobs] = useState([]);
   const { memberId } = useParams();
+  const { user } = useAuthState();
 
   useEffect(() => {
     const fetchAllJobs = async () => {
-      await getAll(memberId, 8)
+      await getAll(memberId, user.id)
         .then((res) => {
           console.log(res);
           setJobs(res);
@@ -27,7 +29,7 @@ const EducationList = () => {
   const handleDeleteJob = async (id) => {
     console.log(id);
     if (window.confirm("Are you sure you want to delete?")) {
-        await deleteJob(id, memberId, 8).then((res)=>{
+        await deleteJob(id, memberId, user.id).then((res)=>{
           console.log("Success::", res);
           const filteredJobs = jobs.filter((job)=>job.id!==id);
           setJobs(filteredJobs);

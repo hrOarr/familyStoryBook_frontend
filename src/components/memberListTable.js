@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { getAllMembersByFid } from "../services/memberService";
 import { MDBDataTableV5 } from "mdbreact";
+import { useAuthState } from '../Context';
 import "./memberListTable.css";
 
 const MemberListTable = () => {
@@ -47,9 +48,11 @@ const MemberListTable = () => {
     rows: [],
   });
 
+  const { user } = useAuthState();
+
   useEffect(() => {
     const fetchAllMembers = async () => {
-      await getAllMembersByFid(8)
+      await getAllMembersByFid(user.id)
         .then((res) => {
           console.log(res);
           let memberList = [];

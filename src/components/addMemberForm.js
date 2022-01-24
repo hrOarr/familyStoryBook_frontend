@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
 import { saveNewMember } from "../services/memberService";
 import { getAllCountryList } from "../utils/importants";
+import { useAuthState } from '../Context';
 import "./addMemberForm.css";
 
 const AddMemberForm = ({hideModal, parentId}) => {
@@ -19,6 +20,7 @@ const AddMemberForm = ({hideModal, parentId}) => {
   });
   const [countries, setCountries] = useState([]);
   const navigate = useNavigate();
+  const { user } = useAuthState();
 
   console.log(memberInfo);
 
@@ -39,7 +41,7 @@ const AddMemberForm = ({hideModal, parentId}) => {
     e.preventDefault();
     console.log(parentId);
 
-    await saveNewMember(memberInfo, parentId, 8)
+    await saveNewMember(memberInfo, parentId, user.id)
       .then((res) => {
         console.log(res);
         hideModal();

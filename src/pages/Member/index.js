@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import MemberEducation from "../../components/Education";
 import MemberJob from "../../components/Job";
+import MemberAchievement from "../../components/Achievement";
 import { Tabs, Tab } from "react-bootstrap";
 import './index.css';
 
@@ -25,7 +26,7 @@ const MemberDashboard = (props) => {
               <MemberJob />
             </Tab>
             <Tab className="tab-nav-link" eventKey="achievement" title="Achievement">
-              Achievement
+              <MemberAchievement />
             </Tab>
           </Tabs>
         </Row>

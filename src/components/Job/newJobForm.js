@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { saveNewJob } from "../../services/jobService";
+import { useAuthState } from '../../Context';
 import "./newJobForm.css";
 
 const NewJobForm = ({memberId}) => {
@@ -13,6 +14,7 @@ const NewJobForm = ({memberId}) => {
       endDate: new Date(),
     },
   ]);
+  const { user } = useAuthState();
 
   const handleChange = (e, idx) => {
     const { name, value } = e.target;
@@ -68,7 +70,7 @@ const NewJobForm = ({memberId}) => {
       }
     });
 
-    await saveNewJob(formState, memberId, 8)
+    await saveNewJob(formState, memberId, user.id)
       .then((res) => {
         console.log("Success:: saveNewJob");
         setFormState([
@@ -87,8 +89,6 @@ const NewJobForm = ({memberId}) => {
         console.log("Error:: saveNewJob");
       });
   };
-
-  console.log("SoA:: " + formState.length);
 
   return (
     <div>

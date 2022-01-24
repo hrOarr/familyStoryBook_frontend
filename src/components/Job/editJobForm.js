@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { updateJob } from "../../services/jobService";
+import { useAuthState } from '../../Context';
 
 const EditJobForm = ({ job, memberId }) => {
   const [state, setState] = useState({
@@ -13,6 +14,7 @@ const EditJobForm = ({ job, memberId }) => {
     endDate: job.endDate,
   });
   const navigate = useNavigate();
+  const { user } = useAuthState();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ const EditJobForm = ({ job, memberId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await updateJob(state, job.id, memberId, 8)
+    await updateJob(state, job.id, memberId, user.id)
       .then((res)=>{
         console.log("Success:: " + res);
         navigate(`/family/members/${memberId}`);

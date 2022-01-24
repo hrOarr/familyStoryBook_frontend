@@ -3,16 +3,18 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Row, Col, Button } from "react-bootstrap";
 import { getAll, deleteEducation } from "../../services/educationService";
+import { useAuthState } from '../../Context';
 import moment from "moment";
 import "./educationList.css";
 
 const EducationList = () => {
   const [educations, setEducations] = useState([]);
   const { memberId } = useParams();
+  const { user } = useAuthState();
 
   useEffect(() => {
     const fetchAllEducations = async () => {
-      await getAll(memberId, 8)
+      await getAll(memberId, user.id)
         .then((res) => {
           console.log(res);
           setEducations(res);
@@ -27,7 +29,7 @@ const EducationList = () => {
   const handleDeleteEducation = async (id) => {
     console.log(id);
     if (window.confirm("Are you sure you want to delete?")) {
-        await deleteEducation(id, memberId, 8).then((res)=>{
+        await deleteEducation(id, memberId, user.id).then((res)=>{
           console.log("Success:: ", res);
           let filteredList = educations.filter((edu)=>edu.id!==id);
           setEducations(filteredList);

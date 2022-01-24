@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { updateEducation } from "../../services/educationService";
+import { useAuthState } from '../../Context';
 
 const EditEducationForm = ({ education, memberId }) => {
   const [state, setState] = useState({
@@ -11,6 +12,7 @@ const EditEducationForm = ({ education, memberId }) => {
     endDate: education.endDate,
   });
   const navigate = useNavigate();
+  const { user } = useAuthState();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ const EditEducationForm = ({ education, memberId }) => {
 
   const handleSubmit = async (e) => {
       e.preventDefault();
-      await updateEducation(state, education.id, memberId, 8)
+      await updateEducation(state, education.id, memberId, user.id)
       .then((res)=>{
         console.log("Success:: " + res);
         navigate(`/family/members/${memberId}`);

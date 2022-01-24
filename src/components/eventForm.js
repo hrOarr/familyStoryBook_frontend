@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { addNewEvent, updateEvent } from "../services/eventService";
 import "./eventForm.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { useAuthState } from '../Context';
 
 const EventForm = (props) => {
   const [state, setState] = useState({
@@ -12,6 +13,7 @@ const EventForm = (props) => {
     eventDateTime: props.isEdit ? props.event.eventDateTime : new Date(),
   });
   const navigate = useNavigate();
+  const { user } = useAuthState();
 
   console.log(props.isEdit + "::");
 
@@ -35,7 +37,7 @@ const EventForm = (props) => {
     console.log(state.eventDateTime);
 
     if (props.isEdit === false) {
-      await addNewEvent(state, 8)
+      await addNewEvent(state, user.id)
         .then((res) => {
           console.log(res);
           setState({
@@ -49,7 +51,7 @@ const EventForm = (props) => {
           console.log(err);
         });
     } else {
-      await updateEvent(state, props.event.id, 8)
+      await updateEvent(state, props.event.id, user.id)
         .then((res) => {
           console.log(res);
           setState({

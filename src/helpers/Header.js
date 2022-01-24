@@ -7,10 +7,22 @@ import {
   Button,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 import NavLink from './NavLink';
+import { useAuthState, useAuthDispatch, logout } from "../Context";
 import "./Header.css";
 
 const Header = () => {
+  const dispatch = useAuthDispatch();
+  const { user } = useAuthState();
+
+  const navigate = useNavigate();
+
+  const handleLogout = ()=>{
+    logout(dispatch);
+    navigate("/family");
+  }
+
   return (
     <div>
       <Navbar expand="lg">
@@ -45,9 +57,9 @@ const Header = () => {
               className="mr-auto my-2 pl-2 my-lg-0"
               style={{ color: "white" }}
             >
-              <Nav.Link href="#">Logged-In User</Nav.Link>
+              <Nav.Link href="#">{user!==''&&user!==undefined?user.username:'Login'}</Nav.Link>
 
-              <Nav.Link href="#">Logout</Nav.Link>
+              <Nav.Link onClick={handleLogout} href="#">{user!==''&&user!==undefined?'Logout':'Signup'}</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

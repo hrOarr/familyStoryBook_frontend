@@ -1,0 +1,13 @@
+.achievementFormSubmit {
+    margin-top: 15px;
+    padding: 8px 10px 8px 10px !important;
+    background-color: #4799eb !important;
+    border-color: #4799eb !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+
+.achievementFormSubmit:hover {
+    background-color: #E81E47 !important;
+    border-color: #E81E47 !important;
+}

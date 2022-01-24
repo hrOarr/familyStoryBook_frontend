@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { addEducation } from "../../services/educationService";
+import { useAuthState } from '../../Context';
 import "./newEducationForm.css";
 
 const NewEducationForm = ({memberId}) => {
@@ -12,6 +13,8 @@ const NewEducationForm = ({memberId}) => {
       endDate: new Date(),
     }
   ]);
+
+  const { user } = useAuthState();
 
   const handleChange = (e, idx) => {
       const {name, value} = e.target;
@@ -61,7 +64,7 @@ const NewEducationForm = ({memberId}) => {
         }
     });
 
-    await addEducation(formState, memberId, 8)
+    await addEducation(formState, memberId, user.id)
     .then((res)=>{
         console.log("Success:: addEducation");
         setFormState([

@@ -1,20 +1,11 @@
 import axios from "axios";
+import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/member/job";
 
-const getConfig = () => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization:
-        "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0aW5nQGdtYWlsLmNvbSIsImV4cCI6MTY0NDE1OTc4NCwiaWF0IjoxNjQyMTYxNzg0fQ.k7oKLsgFdq7jIrlFg0pZ_BBNJ_3NFjsEb0rcfa3fqVtkZ4uSHRre92SL3wWjhZdzRO88VwXTREA9WhIrOO_Xyg",
-    },
-  };
-  return config;
-}
+const config = Config();
 
 export async function getAll(mid, fid){
-    const config = getConfig();
     let jobList = null;
     await axios.get(`${url}/getAll/memberId/${mid}/familyId/${fid}`, config)
     .then((res)=>{
@@ -29,8 +20,6 @@ export async function getAll(mid, fid){
 }
 
 export async function saveNewJob(payload, mid, fid){
-    const config = getConfig();
-
     await axios.post(`${url}/save/memberId/${mid}/familyId/${fid}`, payload, config)
     .then((res)=>{
         console.log("Success:: ", res);
@@ -43,7 +32,6 @@ export async function saveNewJob(payload, mid, fid){
 }
 
 export async function getJobForEdit(jid, mid, fid){
-  const config = getConfig();
   let job = null;
   await axios.get(`${url}/edit/id/${jid}/memberId/${mid}/familyId/${fid}`, config)
   .then((res)=>{
@@ -59,7 +47,6 @@ export async function getJobForEdit(jid, mid, fid){
 }
 
 export async function updateJob(payload, jid, mid, fid){
-    const config = getConfig();
     await axios.put(`${url}/update/id/${jid}/memberId/${mid}/familyId/${fid}`, payload, config)
     .then((res)=>{
       console.log(res.data);
@@ -72,7 +59,6 @@ export async function updateJob(payload, jid, mid, fid){
   }
   
   export async function deleteJob(jid, mid, fid){
-    const config = getConfig();
     await axios.delete(`${url}/delete/id/${jid}/memberId/${mid}/familyId/${fid}`, config)
     .then((res)=>{
       console.log("Success:: deleted", res.data);
