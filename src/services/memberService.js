@@ -3,10 +3,9 @@ import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/family/member";
 
-const config = Config();
-
 export async function getAllMembersByRoot(fid){
     let members = null;
+    const config = Config();
     await axios.get(`${url}/root/${fid}`, config)
     .then((res)=>{
         members = res.data;
@@ -18,7 +17,8 @@ export async function getAllMembersByRoot(fid){
     return members;
 }
 
-export async function saveNewMember(payload, pid, fid){  
+export async function saveNewMember(payload, pid, fid){ 
+  const config = Config(); 
   await axios.post(`${url}/add/familyId/${fid}/parentId/${pid}`, payload, config)
   .then((res)=>{
     console.log(res)
@@ -29,6 +29,7 @@ export async function saveNewMember(payload, pid, fid){
 }
 
 export async function getAllMembersByFid(fid){
+  const config = Config();
   let allMembers = null;
   await axios.get(`${url}/getAll/familyId/${fid}`, config)
   .then((res)=>{

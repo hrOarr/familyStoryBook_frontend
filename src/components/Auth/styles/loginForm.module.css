@@ -1,11 +1,13 @@
-
-.event-form {
-    background-color: #334861;
-    border-radius: 5px;
+.h3-form-header {
+    color: white;
+    text-align: center;
+    letter-spacing: 0.08rem;
+    padding: 80px 0px 15px 0px;
 }
 
 .form-label {
     color: #9cb3c9;
+    letter-spacing: 0.04rem;
     font-size: 17px;
     font-weight: 600;
 }
@@ -17,27 +19,15 @@
     padding: 8px !important;
 }
 
-.h3-form-header {
-    color: white;
-    text-align: center;
-    padding: 30px 0px 2px 0px;
-}
-
-.h4-form-header {
-    color: white;
-    font-size: 16px;
-    font-weight: normal;
-    text-align: center;
-    padding-bottom: 20px;
-    letter-spacing: 0.5px;
-}
-
-.eventFormSubmit {
+.submit-button:hover {
     background-color: #E81E47 !important;
     border-color: #E81E47 !important;
+    letter-spacing: 0.08rem;
 }
 
-.eventFormSubmit:hover {
+.submit-button {
     background-color: #4799eb !important;
     border-color: #4799eb !important;
+    letter-spacing: 0.08rem;
+    font-weight: 600;
 }

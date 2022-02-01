@@ -3,10 +3,9 @@ import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/family/event";
 
-const config = Config();
-
 export async function getAllEventsByFamily(fid) {
   let event = null;
+  const config = Config();
   await axios.get(`${url}/allEventsBy/${fid}`, config)
     .then((res) => {
       //console.log(res.data);
@@ -21,6 +20,7 @@ export async function getAllEventsByFamily(fid) {
 }
 
 export async function addNewEvent(payload, fid){
+  const config = Config();
   await axios.post(`${url}/add/familyId/${fid}`, payload, config
   )
   .then((res)=>{
@@ -33,6 +33,7 @@ export async function addNewEvent(payload, fid){
 }
 
 export async function getSingleEvent(id){
+  const config = Config();
   let event = null;
   await axios.get(`${url}/edit/eventId/${id}`, config)
   .then((res)=>{
@@ -46,6 +47,7 @@ export async function getSingleEvent(id){
 }
 
 export async function updateEvent(payload, id, fid){
+  const config = Config();
   await axios.put(`${url}/update/familyId/${fid}/eventId/${id}`,
   payload, config)
   .then((res)=>{
@@ -57,6 +59,7 @@ export async function updateEvent(payload, id, fid){
 }
 
 export async function deleteEvent(id){
+  const config = Config();
   await axios.delete(`${url}/delete/${id}`, config)
   .then((res)=>{
     console.log(res);

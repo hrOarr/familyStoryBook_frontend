@@ -1,0 +1,15 @@
+.h3-form-header {
+    color: white;
+    text-align: center;
+    letter-spacing: 0.1rem;
+    padding: 50px 0px 10px 0px;
+}
+
+.h4-form-header {
+    color: white;
+    font-size: 16px;
+    font-weight: normal;
+    text-align: center;
+    padding-bottom: 20px;
+    letter-spacing: 0.05rem;
+}

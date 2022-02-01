@@ -6,7 +6,8 @@ export const state = {
 	user: '' || user,
 	token: '' || token,
 	loading: false,
-	errorMessage: null
+	loginError: null,
+    signupError: null
 };
 
 export const AuthReducer = (state, action) => {
@@ -16,7 +17,11 @@ export const AuthReducer = (state, action) => {
                 ...state,
                 loading: true
             };
-        
+        case 'REQUEST_SIGNUP':
+            return {
+                ...state,
+                loading: true
+            };
         case 'LOGIN_SUCCESS':
             return {
                 ...state,
@@ -34,7 +39,13 @@ export const AuthReducer = (state, action) => {
 			return {
 				...state,
 				loading: false,
-				errorMessage: action.error,
+				loginError: action.error,
+			};
+        case 'SIGNUP_ERROR':
+            return {
+				...state,
+				loading: false,
+				signupError: action.error,
 			};
         default:
             throw new Error(`Unhandled action type: ${action.type}`);

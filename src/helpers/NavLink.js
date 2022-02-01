@@ -3,7 +3,8 @@ import { useLocation } from "react-router";
 
 const NavLink = (props) => {
   let location = useLocation();
-  let isEqual = location.pathname === props.to || location.pathname.includes(props.to);
+  console.log(location)
+  let isEqual = location!==undefined && (location.pathname === props.to || location.pathname.includes(props.to));
   let isActive = isEqual ? "active" : "";
 
   return (

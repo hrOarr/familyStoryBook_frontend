@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { loginUser, useAuthState, useAuthDispatch } from '../../Context';
+import { signupUser, useAuthState, useAuthDispatch } from "../../Context";
+import * as styles from "./styles/signupForm.module.css";
+import { useAlert } from 'react-alert';
 
-const LoginForm = (props) => {
+const SignupForm = (props) => {
   const [state, setState] = useState({
-      username: "",
+    username: "",
     email: "",
-    password: "",
+    password: ""
   });
 
   const dispatch = useAuthDispatch();
-  const { loading, errorMessage } = useAuthState();
+  const { loading, signupError } = useAuthState();
   const navigate = useNavigate();
+  const alert = useAlert();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -23,24 +26,46 @@ const LoginForm = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(state);
 
-    let res = await loginUser(dispatch, state);
-    console.log(res)
-    if(res!==undefined){
-        console.log("Success");
-        navigate("/family");
+    let res = await signupUser(dispatch, state);
+    console.log(res);
+    if (res !== undefined && res !== null) {
+      console.log("Success");
+      alert.success("You are registered successfully");
+      alert.success("Logged in successfully");
+      navigate("/family");
     }
   };
 
   return (
     <div>
-      <h3 className="h3-form-header">Login in your account</h3>
-      {errorMessage ? <p style={{color: 'red'}}>{errorMessage}</p> : null}
+      <h3 className={styles["h3-form-header"]}>
+        <span className="fa-1x">
+          <i className="fa fa-user-plus" />
+        </span>
+        &nbsp;Signup new account
+      </h3>
+      {signupError ? <p style={{ color: "red" }}>{signupError}</p> : null}
       <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
+        <Form.Group className="mb-3" controlId="username">
+          <Form.Label className={styles["form-label"]}>Username</Form.Label>
           <Form.Control
+            className={styles['form-control']}
+            name="username"
+            type="text"
+            maxLength="55"
+            minLength="8"
+            placeholder="Enter username"
+            value={state.username}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label className={styles["form-label"]}>Email</Form.Label>
+          <Form.Control
+            className={styles['form-control']}
             name="email"
             type="text"
             maxLength="55"
@@ -53,8 +78,9 @@ const LoginForm = (props) => {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label className={styles["form-label"]}>Password</Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="password"
             type="text"
             placeholder="Enter password"
@@ -66,12 +92,18 @@ const LoginForm = (props) => {
           />
         </Form.Group>
 
-        <Button className="eventFormSubmit" variant="primary" type="submit">
-          Submit
-        </Button>
+        <div style={{ float: "right" }}>
+          <Button
+            className={styles["submit-button"]}
+            variant="primary"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </div>
       </Form>
     </div>
   );
 };
 
-export default LoginForm;
+export default SignupForm;

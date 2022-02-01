@@ -1,0 +1,42 @@
+.member-card {
+    border: 1px solid black;
+    background-color: #dbd0d0;
+    border-radius: 7px;
+    text-align: center;
+    width: 90%;
+}
+
+.info-button:hover {
+    background-color: #4684c3 !important;
+    border-color: #4684c3 !important;
+    letter-spacing: 0.08rem;
+}
+
+.info-button {
+    background-color: #215487 !important;
+    border-color: #215487 !important;
+    letter-spacing: 0.08rem;
+    font-weight: 600;
+}
+
+.add-button:hover {
+    background-color: #215487 !important;
+    border-color: #215487 !important;
+    letter-spacing: 0.08rem;
+}
+
+.add-button {
+    background-color: #4684c3 !important;
+    border-color: #4684c3 !important;
+    letter-spacing: 0.08rem;
+    font-weight: 600;
+}
+
+.expand-collapse {
+    width: 100%;
+    border-color: #215487 !important;
+    background-color: #97a2ad !important;
+    color: rgb(37, 51, 80);
+    font-weight: 600;
+    letter-spacing: 0.06rem;
+}

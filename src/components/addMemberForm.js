@@ -4,9 +4,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
 import { saveNewMember } from "../services/memberService";
-import { getAllCountryList } from "../utils/importants";
+import { getAllCountryList, validateEmail } from "../utils/importants";
 import { useAuthState } from '../Context';
-import "./addMemberForm.css";
+import { useAlert } from "react-alert";
+import * as styles from "./addMemberForm.module.css";
+import { state } from "../Context/reducer";
+import MemberEducation from "./Education";
 
 const AddMemberForm = ({hideModal, parentId}) => {
   const [memberInfo, setMemberInfo] = useState({
@@ -18,11 +21,11 @@ const AddMemberForm = ({hideModal, parentId}) => {
     deathDate: null,
     country: ""
   });
+  const [errors, setErrors] = useState([]);
   const [countries, setCountries] = useState([]);
   const navigate = useNavigate();
   const { user } = useAuthState();
-
-  console.log(memberInfo);
+  const alert = useAlert();
 
   useEffect(() => {
     setCountries(getAllCountryList());
@@ -30,36 +33,66 @@ const AddMemberForm = ({hideModal, parentId}) => {
   }, []);
 
   const handleChange = (e) => {
-    e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
-
     setMemberInfo({ ...memberInfo, [name]: value });
   };
 
+  const validationCheck = ()=>{
+    let err=false;
+    setErrors([]);
+    if(memberInfo.firstName.length<5||memberInfo.firstName.length>15){
+      err=true;
+      setErrors(prv=>([...prv, 'FirstName is invalid(length must be between 5 and 15)']));
+    }
+    if(memberInfo.lastName.length<5||memberInfo.lastName.length>15){
+      err=true;
+      setErrors(prv=>([...prv, 'LastName is invalid(length must be between 5 and 15)']));
+    }
+    console.log(validateEmail)
+    if(memberInfo.email.length==0||validateEmail(memberInfo.email)==false){
+      err=true;
+      setErrors(prv=>([...prv, 'Email is invalid']));
+    }
+    return err;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(parentId);
-
+    alert.info("Request Processing...");
+    if(validationCheck()){
+      return;
+    }
     await saveNewMember(memberInfo, parentId, user.id)
       .then((res) => {
         console.log(res);
         hideModal();
-        window.location.reload();
+        alert.success("Member is added successfully");
+        //window.location.reload();
       })
       .catch((err) => {
+        alert.removeAll();
+        alert.error("Something Went Wrong. Try again later");
         console.log(err);
       });
   };
 
   return (
     <div>
-      <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+      <Form onSubmit={handleSubmit} style={{ marginBottom: "5px" }}>
+       <Row style={{paddingBottom: '10px'}}>
+         {
+           errors.length > 0 && errors.map((err,idx)=>(
+             <div style={{color: 'red'}}>{err}</div>
+           ))
+         }
+       </Row>
         <Row>
           <Col md="6">
             <Form.Group className="mb-3" controlId="firstName">
-              <Form.Label>First Name</Form.Label>
+              <Form.Label className={styles['form-label']}>First Name</Form.Label>
               <Form.Control
+                className={styles['form-control']}
                 name="firstName"
                 type="text"
                 maxLength="55"
@@ -72,8 +105,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
           </Col>
           <Col md="6">
             <Form.Group className="mb-3" controlId="lastName">
-              <Form.Label>Last Name</Form.Label>
+              <Form.Label className={styles['form-label']}>Last Name</Form.Label>
               <Form.Control
+                className={styles['form-control']}
                 name="lastName"
                 type="text"
                 maxLength="55"
@@ -87,8 +121,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
         </Row>
         <Row>
           <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Email</Form.Label>
+            <Form.Label className={styles['form-label']}>Email</Form.Label>
             <Form.Control
+              className={styles['form-control']}
               name="email"
               type="text"
               maxLength="55"
@@ -102,34 +137,31 @@ const AddMemberForm = ({hideModal, parentId}) => {
 
         <Row>
           <Form.Group key="inline-radio" controlId="memberInfo">
-            <Form.Label>Gender:&ensp;</Form.Label>
+            <Form.Label className={styles['form-label']}>Gender:&ensp;</Form.Label>
             <Form.Check
               inline
+              type="radio"
               label="Male"
               value="male"
               name="gender"
-              type="radio"
-              id="inline-radio-1"
               onChange={handleChange}
               checked={memberInfo.gender === "male"}
             />
             <Form.Check
               inline
+              type="radio"
               label="Female"
               value="female"
               name="gender"
-              type="radio"
-              id="inline-radio-2"
               onChange={handleChange}
               checked={memberInfo.gender === "female"}
             />
             <Form.Check
               inline
+              type="radio"
               label="Others"
               value="others"
               name="gender"
-              type="radio"
-              id="inline-radio-3"
               onChange={handleChange}
               checked={memberInfo.gender === "others"}
             />
@@ -137,9 +169,10 @@ const AddMemberForm = ({hideModal, parentId}) => {
         </Row>
         <Row className="mb-3">
           <Col>
-            <Form.Label>Birthdate</Form.Label>
+            <Form.Label className={styles['form-label']}>Birthdate</Form.Label>
 
             <Form.Control
+              className={styles['form-control']}
               name="birthDate"
               type="date"
               value={memberInfo.birthDate}
@@ -147,8 +180,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
             />
           </Col>
           <Col>
-            <Form.Label>Deathdate</Form.Label>
+            <Form.Label className={styles['form-label']}>Deathdate</Form.Label>
             <Form.Control
+              className={styles['form-control']}
               name="deathDate"
               type="date"
               value={memberInfo.deathDate}
@@ -167,11 +201,11 @@ const AddMemberForm = ({hideModal, parentId}) => {
               ))}
           </Form.Select>
         </Row>
-        <Row style={{ textAlign: "center" }}>
-          <Button className="memberFormSubmit" variant="primary" type="submit">
+        <div style={{ textAlign: "center" }}>
+          <Button className={styles.memberFormSubmit} variant="primary" type="submit">
             Submit
           </Button>
-        </Row>
+        </div>
       </Form>
     </div>
   );

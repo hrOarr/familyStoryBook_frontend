@@ -9,6 +9,7 @@ import EditEducation from '../pages/Member/editEducation';
 import EditAchievement from "../pages/Member/editAchievement";
 import EditJob from "../pages/Member/editJob";
 import Login from "../pages/Auth/login";
+import Signup from "../pages/Auth/signup";
 
 const routes = [
     {
@@ -19,6 +20,11 @@ const routes = [
     {
         path: "/auth/login",
         element: Login,
+        isPrivate: false
+    },
+    {
+        path: "/auth/signup",
+        element: Signup,
         isPrivate: false
     },
     {

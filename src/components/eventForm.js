@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { addNewEvent, updateEvent } from "../services/eventService";
-import "./eventForm.css";
+import * as styles from "./eventForm.module.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAuthState } from '../Context';
+import { useAuthState } from "../Context";
+import { useAlert } from "react-alert";
 
 const EventForm = (props) => {
   const [state, setState] = useState({
@@ -14,28 +15,21 @@ const EventForm = (props) => {
   });
   const navigate = useNavigate();
   const { user } = useAuthState();
-
-  console.log(props.isEdit + "::");
+  const alert = useAlert();
 
   const handleChange = (e) => {
     e.preventDefault();
     const name = e.target.name;
     const value = e.target.value;
-
-    console.log(name + " " + value);
-
     setState({ ...state, [name]: value });
   };
 
-  console.log(state)
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    state.eventDateTime = new Date(state.eventDateTime).toISOString().substring(0, 10);
-
-    console.log(state.eventDateTime);
-
+    alert.info("Request Processing...");
+    state.eventDateTime = new Date(state.eventDateTime)
+      .toISOString()
+      .substring(0, 10);
     if (props.isEdit === false) {
       await addNewEvent(state, user.id)
         .then((res) => {
@@ -45,6 +39,8 @@ const EventForm = (props) => {
             eventDetails: "",
             eventDateTime: new Date().toLocaleDateString(),
           });
+          alert.removeAll();
+          alert.success("Event is added successfully");
           navigate("/family/events");
         })
         .catch((err) => {
@@ -59,6 +55,8 @@ const EventForm = (props) => {
             eventDetails: "",
             eventDateTime: new Date().toLocaleDateString(),
           });
+          alert.removeAll();
+          alert.success("Event is updated successfully");
           navigate("/family/events");
         })
         .catch((err) => {
@@ -71,8 +69,9 @@ const EventForm = (props) => {
     <div>
       <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <Form.Group className="mb-3" controlId="eventName">
-          <Form.Label>Event Name</Form.Label>
+          <Form.Label className={styles["form-label"]}>Event Name</Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="eventName"
             type="text"
             maxLength="55"
@@ -84,8 +83,11 @@ const EventForm = (props) => {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventDetails">
-          <Form.Label>Event Details</Form.Label>
+          <Form.Label className={styles["form-label"]}>
+            Event Details
+          </Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="eventDetails"
             as="textarea"
             rows={3}
@@ -99,8 +101,9 @@ const EventForm = (props) => {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="eventTime">
-          <Form.Label>Event Time</Form.Label>
+          <Form.Label className={styles["form-label"]}>Event Time</Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="eventDateTime"
             type="date"
             value={state.eventDateTime}
@@ -108,7 +111,11 @@ const EventForm = (props) => {
           />
         </Form.Group>
 
-        <Button className="eventFormSubmit" variant="primary" type="submit">
+        <Button
+          className={styles.eventFormSubmit}
+          variant="primary"
+          type="submit"
+        >
           Submit
         </Button>
       </Form>

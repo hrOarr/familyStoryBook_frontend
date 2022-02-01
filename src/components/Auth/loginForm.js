@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { loginUser, useAuthState, useAuthDispatch } from '../../Context';
+import { loginUser, useAuthState, useAuthDispatch } from "../../Context";
+import * as styles from "./styles/loginForm.module.css";
+import { useAlert } from 'react-alert';
 
 const LoginForm = (props) => {
   const [state, setState] = useState({
@@ -9,8 +11,10 @@ const LoginForm = (props) => {
     password: "",
   });
 
+  const alert = useAlert();
+
   const dispatch = useAuthDispatch();
-  const { loading, errorMessage } = useAuthState();
+  const { loading, loginError } = useAuthState();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,21 +29,25 @@ const LoginForm = (props) => {
     console.log(state);
 
     let res = await loginUser(dispatch, state);
-    console.log(res)
-    if(res!==undefined){
-        console.log("Success");
-        navigate("/family");
+    console.log(res);
+    if (res !== undefined && res !== null) {
+      console.log("Success");
+      alert.success("Logged in successfully");
+      navigate("/family");
     }
   };
 
   return (
     <div>
-      <h3 className="h3-form-header">Login in your account</h3>
-      {errorMessage ? <p style={{color: 'red'}}>{errorMessage}</p> : null}
+      <h3 className={styles["h3-form-header"]}>
+        <i className="fa fa-sign-in" />&nbsp;Login in your account
+      </h3>
+      {loginError ? <p style={{ color: "red", letterSpacing: '0.02rem' }}>{loginError}</p> : null}
       <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
+          <Form.Label className={styles['form-label']}>Email</Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="email"
             type="text"
             maxLength="55"
@@ -52,8 +60,9 @@ const LoginForm = (props) => {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
+          <Form.Label className={styles['form-label']}>Password</Form.Label>
           <Form.Control
+            className={styles['form-control']}
             name="password"
             type="text"
             placeholder="Enter password"
@@ -65,9 +74,15 @@ const LoginForm = (props) => {
           />
         </Form.Group>
 
-        <Button className="eventFormSubmit" variant="primary" type="submit">
-          Submit
-        </Button>
+        <div style={{float: 'right'}}>
+          <Button
+            className={styles["submit-button"]}
+            variant="primary"
+            type="submit"
+          >
+            Submit
+          </Button>
+        </div>
       </Form>
     </div>
   );
