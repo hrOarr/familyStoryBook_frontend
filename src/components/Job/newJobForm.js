@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { saveNewJob } from "../../services/jobService";
-import { useAuthState } from '../../Context';
-import "./newJobForm.css";
+import { useAuthState } from "../../Context/AuthContext";
+import { useJobDispatch, getAllJobs } from "../../Context/JobContext";
+import { useMemberState } from '../../Context/MemberContext';
+import { useAlert } from "react-alert";
+import * as styles from "./newJobForm.module.css";
 
-const NewJobForm = ({memberId}) => {
+const NewJobForm = ({ memberId }) => {
   const [formState, setFormState] = useState([
     {
       companyName: "",
@@ -15,6 +18,9 @@ const NewJobForm = ({memberId}) => {
     },
   ]);
   const { user } = useAuthState();
+  const dispatch = useJobDispatch();
+  const { member } = useMemberState();
+  const alert = useAlert();
 
   const handleChange = (e, idx) => {
     const { name, value } = e.target;
@@ -48,8 +54,6 @@ const NewJobForm = ({memberId}) => {
     ]);
   };
 
-  console.log(formState);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,6 +74,7 @@ const NewJobForm = ({memberId}) => {
       }
     });
 
+    alert.info("Request Processing...");
     await saveNewJob(formState, memberId, user.id)
       .then((res) => {
         console.log("Success:: saveNewJob");
@@ -83,7 +88,12 @@ const NewJobForm = ({memberId}) => {
             endDate: new Date(),
           },
         ]);
-        window.location.reload();
+        alert.removeAll();
+        alert.success("Job is addedd successfully");
+        const fetchAllJobs = async () => {
+          await getAllJobs(dispatch, { mid: memberId, fid: user.id });
+        };
+        fetchAllJobs();
       })
       .catch((err) => {
         console.log("Error:: saveNewJob");
@@ -92,15 +102,34 @@ const NewJobForm = ({memberId}) => {
 
   return (
     <div>
-      <h3 style={{color: 'white', textAlign: 'center', padding: '30px 0px 20px 0px'}}>Add New Job for Current Member</h3>
+      <h3 className={styles['h3-form-header']}>
+        Add New Job
+      </h3>
+      <h4 className={styles["h4-form-header"]}>
+            <span style={{ textDecoration: "underline", fontSize: "1.1rem" }}>
+              Current Member
+            </span>{" "}
+            -&nbsp;
+            <span
+              style={{
+                fontSize: "1.3rem",
+                letterSpacing: "0.1rem",
+                color: "#9cb3c9",
+                fontWeight: "600",
+              }}
+            >
+              {member.firstName} {member.lastName}
+            </span>
+          </h4>
       <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         {formState.map((state, idx) => (
           <div>
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="companyName">
-                  <Form.Label>Company Name</Form.Label>
+                  <Form.Label className={styles['form-label']}>Company Name</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="companyName"
                     type="text"
                     maxLength="55"
@@ -113,8 +142,9 @@ const NewJobForm = ({memberId}) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="location">
-                  <Form.Label>Location</Form.Label>
+                  <Form.Label className={styles['form-label']}>Location</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="location"
                     type="text"
                     maxLength="55"
@@ -130,8 +160,9 @@ const NewJobForm = ({memberId}) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="jobRole">
-                  <Form.Label>Job-Role</Form.Label>
+                  <Form.Label className={styles['form-label']}>Job-Role</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="jobRole"
                     type="text"
                     maxLength="55"
@@ -145,8 +176,9 @@ const NewJobForm = ({memberId}) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="description">
-                  <Form.Label>Details</Form.Label>
+                  <Form.Label className={styles['form-label']}>Details</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="description"
                     as="textarea"
                     rows={2}
@@ -164,8 +196,9 @@ const NewJobForm = ({memberId}) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="joinDate">
-                  <Form.Label>Join-Date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Join-Date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="joinDate"
                     type="date"
                     value={state.joinDate}
@@ -175,8 +208,9 @@ const NewJobForm = ({memberId}) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="endDate">
-                  <Form.Label>Leave-date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Leave-date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="endDate"
                     type="date"
                     value={state.endDate}
@@ -189,14 +223,14 @@ const NewJobForm = ({memberId}) => {
             <div className="btn-box">
               {formState.length !== 1 && (
                 <Button
-                  className="removeFormButton"
+                  className={styles['removeFormButton']}
                   onClick={() => handleRemoveClick(idx)}
                 >
                   Remove
                 </Button>
               )}
               {formState.length - 1 === idx && (
-                <Button className="addNewFormButton" onClick={handleAddClick}>
+                <Button className={styles['addNewFormButton']} onClick={handleAddClick}>
                   Add
                 </Button>
               )}
@@ -205,7 +239,7 @@ const NewJobForm = ({memberId}) => {
         ))}
 
         <div style={{ textAlign: "center" }}>
-          <Button className="jobFormSubmit" variant="primary" type="submit">
+          <Button className={styles['jobFormSubmit']} variant="primary" type="submit">
             Submit
           </Button>
         </div>

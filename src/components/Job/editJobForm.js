@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { updateJob } from "../../services/jobService";
-import { useAuthState } from '../../Context';
+import { useAuthState } from '../../Context/AuthContext';
+import { useAlert } from "react-alert";
+import { useMemberState, useMemberDispatch, getMemberById } from '../../Context/MemberContext';
+import * as styles from './editJobForm.module.css';
 
 const EditJobForm = ({ job, memberId }) => {
   const [state, setState] = useState({
@@ -15,6 +18,16 @@ const EditJobForm = ({ job, memberId }) => {
   });
   const navigate = useNavigate();
   const { user } = useAuthState();
+  const { member } = useMemberState();
+  const dispatch = useMemberDispatch();
+  const alert = useAlert();
+
+  useEffect(()=>{
+    const fetchMember = async ()=>{
+      await getMemberById(dispatch, {fid: user.id, mid: memberId});
+    };
+    fetchMember();
+  },[]);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -25,10 +38,13 @@ const EditJobForm = ({ job, memberId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    alert.info('Request Processing...');
     await updateJob(state, job.id, memberId, user.id)
       .then((res)=>{
         console.log("Success:: " + res);
-        navigate(`/family/members/${memberId}`);
+        alert.removeAll();
+        alert.success('Job is Updated Successfully');
+        navigate(`/family/members/${memberId}#job`);
       })
       .catch((err)=>{
         console.log("Error:: from editJobForm");
@@ -39,22 +55,32 @@ const EditJobForm = ({ job, memberId }) => {
     <div>
       <Row>
         <Col md="8" className="offset-md-2">
-          <h3
-            style={{
-              marginTop: "30px",
-              marginBottom: "30px",
-              textAlign: "center",
-              color: "white",
-            }}
-          >
+          <h3 className={styles['h3-form-header']}>
             Edit Job
           </h3>
+          <h4 className={styles["h4-form-header"]}>
+            <span style={{ textDecoration: "underline", fontSize: "1.1rem" }}>
+              Current Member
+            </span>{" "}
+            -&nbsp;
+            <span
+              style={{
+                fontSize: "1.3rem",
+                letterSpacing: "0.1rem",
+                color: "#9cb3c9",
+                fontWeight: "600",
+              }}
+            >
+              {member.firstName} {member.lastName}
+            </span>
+          </h4>
           <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="companyName">
-                  <Form.Label>Company Name</Form.Label>
+                  <Form.Label className={styles['form-label']}>Company Name</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="companyName"
                     type="text"
                     maxLength="55"
@@ -67,8 +93,9 @@ const EditJobForm = ({ job, memberId }) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="location">
-                  <Form.Label>Location</Form.Label>
+                  <Form.Label className={styles['form-label']}>Location</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="location"
                     type="text"
                     maxLength="55"
@@ -84,8 +111,9 @@ const EditJobForm = ({ job, memberId }) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="jobRole">
-                  <Form.Label>Job-Role</Form.Label>
+                  <Form.Label className={styles['form-label']}>Job-Role</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="jobRole"
                     type="text"
                     maxLength="55"
@@ -99,8 +127,9 @@ const EditJobForm = ({ job, memberId }) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="description">
-                  <Form.Label>Details</Form.Label>
+                  <Form.Label className={styles['form-label']}>Details</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="description"
                     as="textarea"
                     rows={2}
@@ -118,8 +147,9 @@ const EditJobForm = ({ job, memberId }) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="joinDate">
-                  <Form.Label>Join-Date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Join-Date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="joinDate"
                     type="date"
                     value={state.joinDate}
@@ -129,8 +159,9 @@ const EditJobForm = ({ job, memberId }) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="endDate">
-                  <Form.Label>Leave-date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Leave-date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="endDate"
                     type="date"
                     value={state.endDate}
@@ -141,7 +172,7 @@ const EditJobForm = ({ job, memberId }) => {
             </Row>
 
             <div style={{ textAlign: "center" }}>
-              <Button className="jobFormSubmit" variant="primary" type="submit">
+              <Button className={styles['editButton']} variant="primary" type="submit">
                 Submit
               </Button>
             </div>

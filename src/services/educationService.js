@@ -3,23 +3,13 @@ import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/member/education";
 
-const config = Config();
-
 export async function getAll(mid,fid){
-    let educationList = null;
-    await axios.get(`${url}/getAll/memberId/${mid}/familyId/${fid}`, config)
-    .then((res)=>{
-        console.log(res.data)
-        educationList=res.data;
-    })
-    .catch((err)=>{
-        console.log("Error in getAll educations " + err);
-        return err;
-    })
-    return educationList;
+    const config = Config();
+    return await axios.get(`${url}/getAll/memberId/${mid}/familyId/${fid}`, config);
 }
 
 export async function addEducation(payload, mid, fid){
+  const config = Config();
   await axios.post(`${url}/save/memberId/${mid}/familyId/${fid}`, payload, config)
   .then((res)=>{
     console.log(res)
@@ -33,6 +23,7 @@ export async function addEducation(payload, mid, fid){
 
 export async function getEducationForEdit(eid, mid, fid){
   let education = null;
+  const config = Config();
   await axios.get(`${url}/edit/id/${eid}/memberId/${mid}/familyId/${fid}`, config)
   .then((res)=>{
     console.log(res);
@@ -47,6 +38,7 @@ export async function getEducationForEdit(eid, mid, fid){
 }
 export async function updateEducation(payload, eid, mid, fid){
   console.log(payload)
+  const config = Config();
   await axios.put(`${url}/update/id/${eid}/memberId/${mid}/familyId/${fid}`, payload, config)
   .then((res)=>{
     console.log(res.data);
@@ -59,6 +51,7 @@ export async function updateEducation(payload, eid, mid, fid){
 }
 
 export async function deleteEducation(eid, mid, fid){
+  const config = Config();
   await axios.delete(`${url}/delete/id/${eid}/memberId/${mid}/familyId/${fid}`, config)
   .then((res)=>{
     console.log("Success:: deleted", res.data);

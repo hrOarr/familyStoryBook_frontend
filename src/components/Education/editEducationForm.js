@@ -1,18 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { updateEducation } from "../../services/educationService";
-import { useAuthState } from '../../Context';
+import { useAuthState } from '../../Context/AuthContext';
+import { useMemberState, useMemberDispatch, getMemberById } from '../../Context/MemberContext';
+import { useAlert } from "react-alert";
+import * as styles from './editEducationForm.module.css';
 
 const EditEducationForm = ({ education, memberId }) => {
   const [state, setState] = useState({
     institution: education.institution,
     description: education.description,
     startDate: education.startDate,
-    endDate: education.endDate,
+    endDate: education.endDate
   });
   const navigate = useNavigate();
   const { user } = useAuthState();
+  const { member } = useMemberState();
+  const dispatch = useMemberDispatch();
+  const alert = useAlert();
+
+  useEffect(()=>{
+    const fetchMember = async ()=>{
+      await getMemberById(dispatch, {fid: user.id, mid: memberId});
+    };
+    fetchMember();
+  },[]);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -23,10 +36,13 @@ const EditEducationForm = ({ education, memberId }) => {
 
   const handleSubmit = async (e) => {
       e.preventDefault();
+      alert.info('Request Processing...');
       await updateEducation(state, education.id, memberId, user.id)
       .then((res)=>{
         console.log("Success:: " + res);
-        navigate(`/family/members/${memberId}`);
+        alert.removeAll();
+        alert.success('Education is Updated Successfully');
+        navigate(`/family/members/${memberId}#education`);
       })
       .catch((err)=>{
         console.log("Error:: from editEducationForm");
@@ -37,13 +53,30 @@ const EditEducationForm = ({ education, memberId }) => {
     <div>
       <Row>
         <Col md="8" className="offset-md-2">
-        <h3 style={{marginTop: '30px', marginBottom: '30px', textAlign: 'center', color: 'white'}}>Edit Education</h3>
+        <h3 className={styles["h3-form-header"]}>Edit Education</h3>
+        <h4 className={styles["h4-form-header"]}>
+            <span style={{ textDecoration: "underline", fontSize: "1.1rem" }}>
+              Current Member
+            </span>{" "}
+            -&nbsp;
+            <span
+              style={{
+                fontSize: "1.3rem",
+                letterSpacing: "0.1rem",
+                color: "#9cb3c9",
+                fontWeight: "600",
+              }}
+            >
+              {member.firstName} {member.lastName}
+            </span>
+          </h4>
           <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="institution">
-                  <Form.Label>Institution Name</Form.Label>
+                  <Form.Label className={styles['form-label']}>Institution Name</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="institution"
                     type="text"
                     maxLength="55"
@@ -57,8 +90,9 @@ const EditEducationForm = ({ education, memberId }) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="description">
-                  <Form.Label>Details</Form.Label>
+                  <Form.Label className={styles['form-label']}>Details</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="description"
                     as="textarea"
                     rows={2}
@@ -76,8 +110,9 @@ const EditEducationForm = ({ education, memberId }) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="startDate">
-                  <Form.Label>Start-Date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Start-Date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="startDate"
                     type="date"
                     value={state.startDate}
@@ -87,8 +122,9 @@ const EditEducationForm = ({ education, memberId }) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="endDate">
-                  <Form.Label>End-date</Form.Label>
+                  <Form.Label className={styles['form-label']}>End-date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="endDate"
                     type="date"
                     value={state.endDate}
@@ -99,7 +135,7 @@ const EditEducationForm = ({ education, memberId }) => {
             </Row>
             <div style={{ textAlign: "center" }}>
               <Button
-                className="educationFormSubmit"
+                className={styles['editButton']}
                 variant="primary"
                 type="submit"
               >

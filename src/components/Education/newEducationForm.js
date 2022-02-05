@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { addEducation } from "../../services/educationService";
-import { useAuthState } from '../../Context';
-import "./newEducationForm.css";
+import { useAuthState } from '../../Context/AuthContext';
+import { useEducationDispatch, getAllEducations } from "../../Context/EducationContext";
+import { useAlert } from "react-alert";
+import * as styles from "./newEducationForm.module.css";
 
 const NewEducationForm = ({memberId}) => {
   const [formState, setFormState] = useState([
@@ -10,11 +12,13 @@ const NewEducationForm = ({memberId}) => {
       institution: "",
       description: "",
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: new Date()
     }
   ]);
 
   const { user } = useAuthState();
+  const dispatch = useEducationDispatch();
+  const alert = useAlert();
 
   const handleChange = (e, idx) => {
       const {name, value} = e.target;
@@ -41,12 +45,10 @@ const NewEducationForm = ({memberId}) => {
         institution: "",
         description: "",
         startDate: new Date(),
-        endDate: new Date(),
+        endDate: new Date()
       },
     ]);
   };
-
-  console.log(formState)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +66,7 @@ const NewEducationForm = ({memberId}) => {
         }
     });
 
+    alert.info('Request Processing...');
     await addEducation(formState, memberId, user.id)
     .then((res)=>{
         console.log("Success:: addEducation");
@@ -72,10 +75,15 @@ const NewEducationForm = ({memberId}) => {
               institution: "",
               description: "",
               startDate: new Date(),
-              endDate: new Date(),
+              endDate: new Date()
             }
         ]);
-        window.location.reload();
+        alert.removeAll();
+        alert.success('Education is addedd successfully');
+        const fetchAllEducations = async () => {
+          await getAllEducations(dispatch, {mid: memberId, fid: user.id});
+        };
+        fetchAllEducations();
     })
     .catch((err)=>{
         console.log("Error:: addEducation");
@@ -93,8 +101,9 @@ const NewEducationForm = ({memberId}) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="institution">
-                  <Form.Label>Institution Name</Form.Label>
+                  <Form.Label className={styles['form-label']}>Institution Name</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="institution"
                     type="text"
                     maxLength="55"
@@ -108,8 +117,9 @@ const NewEducationForm = ({memberId}) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="description">
-                  <Form.Label>Details</Form.Label>
+                  <Form.Label className={styles['form-label']}>Details</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="description"
                     as="textarea"
                     rows={2}
@@ -127,8 +137,9 @@ const NewEducationForm = ({memberId}) => {
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="startDate">
-                  <Form.Label>Start-Date</Form.Label>
+                  <Form.Label className={styles['form-label']}>Start-Date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="startDate"
                     type="date"
                     value={state.startDate}
@@ -138,8 +149,9 @@ const NewEducationForm = ({memberId}) => {
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="endDate">
-                  <Form.Label>End-date</Form.Label>
+                  <Form.Label className={styles['form-label']}>End-date</Form.Label>
                   <Form.Control
+                    className={styles['form-control']}
                     name="endDate"
                     type="date"
                     value={state.endDate}
@@ -152,14 +164,14 @@ const NewEducationForm = ({memberId}) => {
             <div className="btn-box">
               {formState.length !== 1 && (
                 <Button
-                  className="removeFormButton"
+                  className={styles['removeFormButton']}
                   onClick={() => handleRemoveClick(idx)}
                 >
                   Remove
                 </Button>
               )}
               {formState.length - 1 === idx && (
-                <Button className="addNewFormButton" onClick={handleAddClick}>
+                <Button className={styles['addNewFormButton']} onClick={handleAddClick}>
                   Add
                 </Button>
               )}
@@ -169,7 +181,7 @@ const NewEducationForm = ({memberId}) => {
 
         <div style={{ textAlign: "center" }}>
           <Button
-            className="educationFormSubmit"
+            className={styles['educationFormSubmit']}
             variant="primary"
             type="submit"
           >

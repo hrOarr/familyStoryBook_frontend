@@ -9,7 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router";
 import NavLink from "./NavLink";
-import { useAuthState, useAuthDispatch, logout } from "../Context";
+import { useAuthState, useAuthDispatch, logout } from "../Context/AuthContext";
 import { useAlert } from "react-alert";
 import "./Header.css";
 import { useEffect } from "react";
@@ -38,7 +38,7 @@ const Header = () => {
   }, [location]);
 
   return (
-    <div>
+    <div style={{marginTop: '10px'}}>
       <Navbar expand="lg">
         <Container fluid>
           <Link className="navbar-brand" to="/family">
@@ -72,7 +72,7 @@ const Header = () => {
                 className="me-2"
                 aria-label="Search"
               />
-              <Button variant="outline-success">Search</Button>
+              <Button variant="outline-info">Search</Button>
             </Form>
 
             <Nav className="mr-auto my-2 pl-2 my-lg-0">

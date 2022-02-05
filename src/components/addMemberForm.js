@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router";
 import { saveNewMember } from "../services/memberService";
 import { getAllCountryList, validateEmail } from "../utils/importants";
-import { useAuthState } from '../Context';
+import { useAuthState } from "../Context/AuthContext";
 import { useAlert } from "react-alert";
 import * as styles from "./addMemberForm.module.css";
-import { state } from "../Context/reducer";
-import MemberEducation from "./Education";
 
-const AddMemberForm = ({hideModal, parentId}) => {
+const AddMemberForm = ({ hideModal, parentId }) => {
   const [memberInfo, setMemberInfo] = useState({
     firstName: "",
     lastName: "",
     email: "",
     gender: "",
-    birthDate: new Date().toLocaleDateString(),
+    birthDate: null,
     deathDate: null,
-    country: ""
+    country: "",
   });
   const [errors, setErrors] = useState([]);
   const [countries, setCountries] = useState([]);
@@ -38,37 +35,54 @@ const AddMemberForm = ({hideModal, parentId}) => {
     setMemberInfo({ ...memberInfo, [name]: value });
   };
 
-  const validationCheck = ()=>{
-    let err=false;
+  const validationCheck = () => {
+    let err = false;
     setErrors([]);
-    if(memberInfo.firstName.length<5||memberInfo.firstName.length>15){
-      err=true;
-      setErrors(prv=>([...prv, 'FirstName is invalid(length must be between 5 and 15)']));
+    if (memberInfo.firstName.length < 5 || memberInfo.firstName.length > 15) {
+      err = true;
+      setErrors((prv) => [
+        ...prv,
+        "FirstName is invalid(length must be between 5 and 15)",
+      ]);
     }
-    if(memberInfo.lastName.length<5||memberInfo.lastName.length>15){
-      err=true;
-      setErrors(prv=>([...prv, 'LastName is invalid(length must be between 5 and 15)']));
+    if (memberInfo.lastName.length < 5 || memberInfo.lastName.length > 15) {
+      err = true;
+      setErrors((prv) => [
+        ...prv,
+        "LastName is invalid(length must be between 5 and 15)",
+      ]);
     }
-    console.log(validateEmail)
-    if(memberInfo.email.length==0||validateEmail(memberInfo.email)==false){
-      err=true;
-      setErrors(prv=>([...prv, 'Email is invalid']));
+    if (validateEmail(memberInfo.email) == false) {
+      err = true;
+      setErrors((prv) => [...prv, "Email is invalid"]);
+    }
+    if (memberInfo.gender == "") {
+      err = true;
+      setErrors((prv) => [...prv, "Gender must be selected"]);
+    }
+    if (memberInfo.birthDate == null) {
+      err = true;
+      setErrors((prv) => [...prv, "Birthdate is invalid"]);
+    }
+    if (memberInfo.country == "") {
+      err = true;
+      setErrors((prv) => [...prv, "Country must be selected"]);
     }
     return err;
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert.info("Request Processing...");
-    if(validationCheck()){
+    if (validationCheck()) {
       return;
     }
+    alert.info("Request Processing...");
     await saveNewMember(memberInfo, parentId, user.id)
       .then((res) => {
         console.log(res);
         hideModal();
         alert.success("Member is added successfully");
-        //window.location.reload();
+        window.location.reload();
       })
       .catch((err) => {
         alert.removeAll();
@@ -80,19 +94,30 @@ const AddMemberForm = ({hideModal, parentId}) => {
   return (
     <div>
       <Form onSubmit={handleSubmit} style={{ marginBottom: "5px" }}>
-       <Row style={{paddingBottom: '10px'}}>
-         {
-           errors.length > 0 && errors.map((err,idx)=>(
-             <div style={{color: 'red'}}>{err}</div>
-           ))
-         }
-       </Row>
+        {errors.length > 0 && (
+          <Row
+            style={{
+              padding: "6px",
+              marginBottom: "10px",
+              background: "#e1e8ef",
+              borderRadius: "5px",
+            }}
+          >
+            {errors.map((err, idx) => (
+              <div style={{ color: "red", letterSpacing: "0.04rem" }}>
+                {err}
+              </div>
+            ))}
+          </Row>
+        )}
         <Row>
           <Col md="6">
             <Form.Group className="mb-3" controlId="firstName">
-              <Form.Label className={styles['form-label']}>First Name</Form.Label>
+              <Form.Label className={styles["form-label"]}>
+                First Name
+              </Form.Label>
               <Form.Control
-                className={styles['form-control']}
+                className={styles["form-control"]}
                 name="firstName"
                 type="text"
                 maxLength="55"
@@ -105,9 +130,11 @@ const AddMemberForm = ({hideModal, parentId}) => {
           </Col>
           <Col md="6">
             <Form.Group className="mb-3" controlId="lastName">
-              <Form.Label className={styles['form-label']}>Last Name</Form.Label>
+              <Form.Label className={styles["form-label"]}>
+                Last Name
+              </Form.Label>
               <Form.Control
-                className={styles['form-control']}
+                className={styles["form-control"]}
                 name="lastName"
                 type="text"
                 maxLength="55"
@@ -121,9 +148,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
         </Row>
         <Row>
           <Form.Group className="mb-3" controlId="email">
-            <Form.Label className={styles['form-label']}>Email</Form.Label>
+            <Form.Label className={styles["form-label"]}>Email</Form.Label>
             <Form.Control
-              className={styles['form-control']}
+              className={styles["form-control"]}
               name="email"
               type="text"
               maxLength="55"
@@ -137,7 +164,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
 
         <Row>
           <Form.Group key="inline-radio" controlId="memberInfo">
-            <Form.Label className={styles['form-label']}>Gender:&ensp;</Form.Label>
+            <Form.Label className={styles["form-label"]}>
+              Gender:&ensp;
+            </Form.Label>
             <Form.Check
               inline
               type="radio"
@@ -169,10 +198,10 @@ const AddMemberForm = ({hideModal, parentId}) => {
         </Row>
         <Row className="mb-3">
           <Col>
-            <Form.Label className={styles['form-label']}>Birthdate</Form.Label>
+            <Form.Label className={styles["form-label"]}>Birthdate</Form.Label>
 
             <Form.Control
-              className={styles['form-control']}
+              className={styles["form-control"]}
               name="birthDate"
               type="date"
               value={memberInfo.birthDate}
@@ -180,9 +209,9 @@ const AddMemberForm = ({hideModal, parentId}) => {
             />
           </Col>
           <Col>
-            <Form.Label className={styles['form-label']}>Deathdate</Form.Label>
+            <Form.Label className={styles["form-label"]}>Deathdate</Form.Label>
             <Form.Control
-              className={styles['form-control']}
+              className={styles["form-control"]}
               name="deathDate"
               type="date"
               value={memberInfo.deathDate}
@@ -202,7 +231,11 @@ const AddMemberForm = ({hideModal, parentId}) => {
           </Form.Select>
         </Row>
         <div style={{ textAlign: "center" }}>
-          <Button className={styles.memberFormSubmit} variant="primary" type="submit">
+          <Button
+            className={styles.memberFormSubmit}
+            variant="primary"
+            type="submit"
+          >
             Submit
           </Button>
         </div>

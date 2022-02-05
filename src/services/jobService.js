@@ -3,23 +3,13 @@ import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/member/job";
 
-const config = Config();
-
 export async function getAll(mid, fid){
-    let jobList = null;
-    await axios.get(`${url}/getAll/memberId/${mid}/familyId/${fid}`, config)
-    .then((res)=>{
-        console.log("Success:: ", res.data)
-        jobList=res.data;
-    })
-    .catch((err)=>{
-        console.log("Error in getAll jobs " + err);
-        return err;
-    })
-    return jobList;
+    const config = Config();
+    return await axios.get(`${url}/getAll/memberId/${mid}/familyId/${fid}`, config);
 }
 
 export async function saveNewJob(payload, mid, fid){
+  const config = Config();
     await axios.post(`${url}/save/memberId/${mid}/familyId/${fid}`, payload, config)
     .then((res)=>{
         console.log("Success:: ", res);
@@ -33,6 +23,7 @@ export async function saveNewJob(payload, mid, fid){
 
 export async function getJobForEdit(jid, mid, fid){
   let job = null;
+  const config = Config();
   await axios.get(`${url}/edit/id/${jid}/memberId/${mid}/familyId/${fid}`, config)
   .then((res)=>{
     console.log(res);
@@ -47,6 +38,7 @@ export async function getJobForEdit(jid, mid, fid){
 }
 
 export async function updateJob(payload, jid, mid, fid){
+  const config = Config();
     await axios.put(`${url}/update/id/${jid}/memberId/${mid}/familyId/${fid}`, payload, config)
     .then((res)=>{
       console.log(res.data);
@@ -59,6 +51,7 @@ export async function updateJob(payload, jid, mid, fid){
   }
   
   export async function deleteJob(jid, mid, fid){
+    const config = Config();
     await axios.delete(`${url}/delete/id/${jid}/memberId/${mid}/familyId/${fid}`, config)
     .then((res)=>{
       console.log("Success:: deleted", res.data);

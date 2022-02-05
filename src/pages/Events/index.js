@@ -3,7 +3,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import { getAllEventsByFamily, deleteEvent } from "../../services/eventService";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { useAuthState } from "../../Context";
+import { useAuthState } from "../../Context/AuthContext";
 import { TailSpin } from "react-loader-spinner";
 import * as styles from "./index.module.css";
 import { useAlert } from "react-alert";

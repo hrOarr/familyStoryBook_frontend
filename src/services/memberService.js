@@ -3,6 +3,11 @@ import { Config } from "../Config/apiConfig";
 
 const url = "http://localhost:8081/api/v1/family/member";
 
+export async function getById(fid, mid) {
+  const config = Config();
+  return await axios.get(`${url}/memberId/${mid}/familyId/${fid}`, config);
+}
+
 export async function getAllMembersByRoot(fid){
     let members = null;
     const config = Config();

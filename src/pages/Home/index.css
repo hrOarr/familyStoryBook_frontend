@@ -1,0 +1,10 @@
+
+.block {
+    background-image: url('../../images/family-custom4.png');
+    position: relative;
+    height: 1000px;
+    background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}

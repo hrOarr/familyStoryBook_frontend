@@ -3,8 +3,11 @@ import { Button, Col, Row } from "react-bootstrap";
 import moment from "moment";
 
 function diff_years(deathDate, birthDate) {
-  const dt2 = new Date(deathDate);
+  let dt2 = new Date(deathDate);
   const dt1 = new Date(birthDate);
+  if(deathDate==null){
+    dt2 = new Date();
+  }
   let diff = (dt2.getTime() - dt1.getTime()) / 1000;
   diff /= 60 * 60 * 24;
   return Math.abs(Math.round(diff / 365.25));

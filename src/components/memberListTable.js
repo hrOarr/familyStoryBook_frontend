@@ -2,55 +2,72 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { getAllMembersByFid } from "../services/memberService";
-import { MDBDataTableV5 } from "mdbreact";
-import { useAuthState } from '../Context';
-import "./memberListTable.css";
+import DataTable from "react-data-table-component";
+import { useAuthState } from "../Context/AuthContext";
+import { TailSpin } from "react-loader-spinner";
+import * as styles from "./memberListTable.module.css";
+
+const customStyles = {
+  headCells: {
+    style: {
+      fontWeight: "800",
+      fontSize: "0.9rem",
+      background: "#e5eaf0",
+    },
+  },
+  rows: {
+    style: {
+      color: "#566373",
+      fontSize: "15px",
+      fontWeight: "600",
+      letterSpacing: "0.03rem",
+    },
+  },
+};
 
 const MemberListTable = () => {
-  const [dataList, setDataList] = useState({
-    columns: [
-      {
-        label: "First-name",
-        field: "firstName",
-        width: 150,
-      },
-      {
-        label: "Last-name",
-        field: "lastName",
-        width: 150,
-      },
-      {
-        label: "Gender",
-        field: "gender",
-        width: 150,
-      },
-      {
-        label: "Birthdate",
-        field: "birthDate",
-        width: 150,
-      },
-      {
-        label: "Deathdate",
-        field: "deathDate",
-        width: 150,
-      },
-      {
-        label: "Country",
-        field: "country",
-        width: 150,
-      },
-      {
-        label: "Action",
-        field: 'action',
-        width: 150
-      }
-    ],
-    rows: [],
-  });
-
+  const [data, setData] = useState([]);
+  const [columns, setColumns] = useState([
+    {
+      name: "First-name",
+      selector: (row) => row.firstName,
+      sortable: true,
+    },
+    {
+      name: "Last-name",
+      selector: (row) => row.lastName,
+      sortable: true,
+    },
+    {
+      name: "Gender",
+      selector: (row) => row.gender,
+      sortable: true,
+    },
+    {
+      name: "Birthdate",
+      selector: (row) => row.birthDate,
+      sortable: true,
+    },
+    {
+      name: "Deathdate",
+      selector: (row) => row.deathDate,
+      sortable: true,
+    },
+    {
+      name: "Country",
+      selector: (row) => row.country,
+      sortable: true,
+    },
+    {
+      name: "Action",
+      selector: (row) => row.action,
+    },
+  ]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuthState();
 
   useEffect(() => {
+    setLoading(true);
     const fetchAllMembers = async () => {
       await getAllMembersByFid(user.id)
         .then((res) => {
@@ -66,13 +83,15 @@ const MemberListTable = () => {
               country: member.country,
               action: (
                 <Link to={`/family/members/${member.id}`}>
-                <Button className="#">See Details</Button>
-              </Link>
-              )
+                  <Button className={styles.detailsButton}>Details</Button>
+                </Link>
+              ),
             })
           );
-          setDataList({ ...dataList, rows: memberList });
-          console.log(dataList);
+          setData(memberList);
+          setTimeout(() => {
+            setLoading(false);
+          }, 2000);
         })
         .catch((err) => {
           console.log(err);
@@ -83,31 +102,43 @@ const MemberListTable = () => {
 
   return (
     <Container>
-      {dataList.rows.length > 0 ? (
-        <Row>
-        <div style={{ textAlign: "center", paddingTop: "25px" }}>
-          <h3 style={{ color: "white" }}>Your family members</h3>
-          <h4 className="h4-form-header">
-              Look all of your favourite persons in one place
-          </h4>
+      {loading == true ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingTop: "100px",
+          }}
+        >
+          <TailSpin
+            heigth="100"
+            width="100"
+            color="white"
+            ariaLabel="loading"
+          />
         </div>
-          <div className="memberListTable">
-            <MDBDataTableV5
-              hover
-              borderless
-              theadTextWhite
-              entriesOptions={[10, 20, 25]}
-              entries={10}
-              pagesAmount={4}
-              data={dataList}
-              style={{ color: "#97aecc", fontSize: "1.05rem" }}
-              responsive
-              tbodyColor="#334861"
-            />
-          </div>
-        </Row>
       ) : (
-        <div style={{ color: "white" }}>Loading ...</div>
+        data.length > 0 && (
+          <Row>
+            <div style={{ textAlign: "center", paddingTop: "25px" }}>
+              <h3 style={{ color: "white", letterSpacing: "0.06rem" }}>
+                Your family members
+              </h3>
+              <h4 className={styles["h4-form-header"]}>
+                Look all of your favourite persons in one place
+              </h4>
+            </div>
+            <div className={styles.memberListTable}>
+              <DataTable
+                columns={columns}
+                data={data}
+                pagination
+                customStyles={customStyles}
+              />
+            </div>
+          </Row>
+        )
       )}
     </Container>
   );

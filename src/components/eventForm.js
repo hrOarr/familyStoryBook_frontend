@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { addNewEvent, updateEvent } from "../services/eventService";
 import * as styles from "./eventForm.module.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAuthState } from "../Context";
+import { useAuthState } from "../Context/AuthContext";
 import { useAlert } from "react-alert";
 
 const EventForm = (props) => {

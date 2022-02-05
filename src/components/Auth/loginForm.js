@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { loginUser, useAuthState, useAuthDispatch } from "../../Context";
+import { loginUser, useAuthState, useAuthDispatch } from "../../Context/AuthContext";
 import * as styles from "./styles/loginForm.module.css";
 import { useAlert } from 'react-alert';
 

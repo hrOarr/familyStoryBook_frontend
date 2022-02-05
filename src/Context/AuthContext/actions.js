@@ -1,4 +1,4 @@
-import { signup, login } from "../services/authService";
+import { signup, login } from "../../services/authService";
 
 export async function signupUser(dispatch, payload) {
     dispatch({ type: "REQUEST_SIGNUP" });

@@ -7,7 +7,11 @@
     border-bottom: none !important;
 }
 
+.nav-item:hover {
+    border: none !important;
+}
+
 .nav-item .active {
     background-color: #334861 !important;
-    border: none;
+    border: none !important;
 }

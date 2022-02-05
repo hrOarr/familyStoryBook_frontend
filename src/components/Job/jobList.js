@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { getAll, deleteJob } from "../../services/jobService";
-import { useAuthState } from '../../Context';
+import { Row, Col, Button } from "react-bootstrap";
+import { deleteJob } from "../../services/jobService";
+import { useAuthState } from '../../Context/AuthContext';
+import { useJobState, useJobDispatch, getAllJobs } from '../../Context/JobContext';
 import moment from "moment";
-import "./jobList.css";
+import { useAlert } from "react-alert";
+import { TailSpin } from "react-loader-spinner";
+import * as styles from "./jobList.module.css";
 
 const EducationList = () => {
-  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { memberId } = useParams();
   const { user } = useAuthState();
+  const { jobs } = useJobState();
+  const dispatch = useJobDispatch();
+  const alert = useAlert();
 
   useEffect(() => {
+    setLoading(true);
     const fetchAllJobs = async () => {
-      await getAll(memberId, user.id)
-        .then((res) => {
-          console.log(res);
-          setJobs(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+     await getAllJobs(dispatch, {mid: memberId, fid: user.id});
+     setTimeout(() => {
+      setLoading(false);
+    }, 2000);
     };
     fetchAllJobs();
   }, []);
@@ -29,10 +32,15 @@ const EducationList = () => {
   const handleDeleteJob = async (id) => {
     console.log(id);
     if (window.confirm("Are you sure you want to delete?")) {
+      alert.info("Request Processing...");
         await deleteJob(id, memberId, user.id).then((res)=>{
           console.log("Success::", res);
-          const filteredJobs = jobs.filter((job)=>job.id!==id);
-          setJobs(filteredJobs);
+          const fetchAllJobs = async () => {
+            await getAllJobs(dispatch, {mid: memberId, fid: user.id})
+           };
+           fetchAllJobs();
+           alert.removeAll();
+           alert.success("Job is deleted successfully");
         })
         .catch((err)=>{
           console.log("Error:: deleteJob", err);
@@ -41,12 +49,28 @@ const EducationList = () => {
   };
 
   return (
-    <div className="jobList">
+    <div className={styles['jobList']}>
       <Row>
-        {jobs && jobs.length > 0 ? (
+      {loading == true ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <TailSpin
+            heigth="100"
+            width="100"
+            color="white"
+            ariaLabel="loading"
+          />
+        </div>
+      ) : (
+        jobs.length > 0 &&
           jobs.map((job, idx) => (
             <Col md="12">
-              <div className="jobCard">
+              <div className={styles['jobCard']}>
                 <Row>
                   <Col md="8">
                     <h5>{job.companyName}</h5>
@@ -68,11 +92,11 @@ const EducationList = () => {
                 </Row>
                 <div style={{ display: "inline-block" }}>
                   <Link to={`/family/members/${memberId}/job/${job.id}`}>
-                    <Button className="editEventButton">Edit</Button>
+                    <Button className={styles['editButton']}>Edit</Button>
                   </Link>
                   <Button
                     onClick={() => handleDeleteJob(job.id)}
-                    className="deleteEventButton"
+                    className={styles['deleteButton']}
                     style={{ marginLeft: "12px" }}
                   >
                     Delete
@@ -81,8 +105,6 @@ const EducationList = () => {
               </div>
             </Col>
           ))
-        ) : (
-          <div>Loading ...</div>
         )}
       </Row>
     </div>

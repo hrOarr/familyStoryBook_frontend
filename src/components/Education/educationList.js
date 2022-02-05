@@ -2,26 +2,33 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import { Row, Col, Button } from "react-bootstrap";
-import { getAll, deleteEducation } from "../../services/educationService";
-import { useAuthState } from '../../Context';
+import { deleteEducation } from "../../services/educationService";
+import { useAuthState } from "../../Context/AuthContext";
+import {
+  useEducationState,
+  useEducationDispatch,
+  getAllEducations,
+} from "../../Context/EducationContext";
 import moment from "moment";
-import "./educationList.css";
+import { useAlert } from "react-alert";
+import { TailSpin } from "react-loader-spinner";
+import * as styles from "./educationList.module.css";
 
 const EducationList = () => {
-  const [educations, setEducations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { memberId } = useParams();
   const { user } = useAuthState();
+  const dispatch = useEducationDispatch();
+  const { educations } = useEducationState();
+  const alert = useAlert();
 
   useEffect(() => {
+    setLoading(true);
     const fetchAllEducations = async () => {
-      await getAll(memberId, user.id)
-        .then((res) => {
-          console.log(res);
-          setEducations(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      await getAllEducations(dispatch, { mid: memberId, fid: user.id });
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     };
     fetchAllEducations();
   }, []);
@@ -29,24 +36,45 @@ const EducationList = () => {
   const handleDeleteEducation = async (id) => {
     console.log(id);
     if (window.confirm("Are you sure you want to delete?")) {
-        await deleteEducation(id, memberId, user.id).then((res)=>{
-          console.log("Success:: ", res);
-          let filteredList = educations.filter((edu)=>edu.id!==id);
-          setEducations(filteredList);
+      alert.info("Request Processing...");
+      await deleteEducation(id, memberId, user.id)
+        .then((res) => {
+          const fetchAllEducations = async () => {
+            await getAllEducations(dispatch, { mid: memberId, fid: user.id });
+          };
+          fetchAllEducations();
+          alert.removeAll();
+          alert.success("Education is deleted successfully");
         })
-        .catch((err)=>{
+        .catch((err) => {
           console.log("Error:: ", err);
         });
     }
   };
 
   return (
-    <div className="educationList">
+    <div className={styles['educationList']}>
       <Row>
-        {educations && educations.length > 0 ? (
+      {loading == true ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <TailSpin
+            heigth="100"
+            width="100"
+            color="white"
+            ariaLabel="loading"
+          />
+        </div>
+      ) : (
+        educations.length > 0 &&
           educations.map((edu, idx) => (
             <Col md="12">
-              <div className="educationCard">
+              <div className={styles['educationCard']}>
                 <Row>
                   <Col md="8">
                     <h5>{edu.institution}</h5>
@@ -66,11 +94,11 @@ const EducationList = () => {
                 </Row>
                 <div style={{ display: "inline-block" }}>
                   <Link to={`/family/members/${memberId}/education/${edu.id}`}>
-                    <Button className="editEventButton">Edit</Button>
+                    <Button className={styles['editButton']}>Edit</Button>
                   </Link>
                   <Button
                     onClick={() => handleDeleteEducation(edu.id)}
-                    className="deleteEventButton"
+                    className={styles['deleteButton']}
                     style={{ marginLeft: "12px" }}
                   >
                     Delete
@@ -79,8 +107,6 @@ const EducationList = () => {
               </div>
             </Col>
           ))
-        ) : (
-          <div>Loading ...</div>
         )}
       </Row>
     </div>

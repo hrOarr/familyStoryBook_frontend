@@ -1,5 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuthState } from "../Context";
+import { useAuthState } from "../Context/AuthContext";
 
 const AppRoute = ({ component: Component, path, isPrivate, ...rest }) => {
   const userDetails = useAuthState();

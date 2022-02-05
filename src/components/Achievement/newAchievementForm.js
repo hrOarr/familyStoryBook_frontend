@@ -1,17 +1,23 @@
 import { useState, useRef } from "react";
 import { Form, Button, Row, Col, FormGroup } from "react-bootstrap";
 import { saveNewAchievement } from "../../services/achievementService";
-import { useAuthState } from '../../Context';
-import "./newAchievementForm.css";
+import { useAuthState } from '../../Context/AuthContext';
+import { getAllAchievements, useAchievementDispatch } from "../../Context/achievementContext";
+import { useMemberState } from '../../Context/MemberContext';
+import { useAlert } from "react-alert";
+import * as styles from "./newAchievementForm.module.css";
 
 const NewAchievementForm = ({memberId}) => {
   const [state, setState] = useState({
     title: "",
     description: "",
-    image: "",
+    image: ""
   });
 
   const { user } = useAuthState();
+  const dispatch = useAchievementDispatch();
+  const { member } = useMemberState();
+  const alert = useAlert();
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -33,14 +39,20 @@ const NewAchievementForm = ({memberId}) => {
     formData.append('data', data);
     formData.append('image', state.image);
 
+    alert.info('Request Processing...');
     await saveNewAchievement(formData, memberId, user.id).then((res)=>{
         console.log("Success:: ", res);
         setState({
           title: "",
           description: "",
-          image: "",
+          image: ""
         });
-        window.location.reload();
+        alert.removeAll();
+        alert.success('Achievement is added successfully');
+        const getAll = async ()=>{
+          await getAllAchievements(dispatch, {mid: memberId, fid: user.id});
+        };
+        getAll();
     })
     .catch((err)=>{
         console.log("Error:: saveAchievement");
@@ -49,21 +61,32 @@ const NewAchievementForm = ({memberId}) => {
 
   return (
     <div>
-      <h3
-        style={{
-          color: "white",
-          textAlign: "center",
-          padding: "30px 0px 20px 0px",
-        }}
-      >
-        Add New Achievement for Current Member
+      <h3 className={styles['h3-form-header']}>
+        Add New Achievement
       </h3>
+      <h4 className={styles["h4-form-header"]}>
+            <span style={{ textDecoration: "underline", fontSize: "1.1rem" }}>
+              Current Member
+            </span>{" "}
+            -&nbsp;
+            <span
+              style={{
+                fontSize: "1.3rem",
+                letterSpacing: "0.1rem",
+                color: "#9cb3c9",
+                fontWeight: "600",
+              }}
+            >
+              {member.firstName} {member.lastName}
+            </span>
+          </h4>
       <Form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="title">
-              <Form.Label>Title</Form.Label>
+              <Form.Label className={styles['form-label']}>Title</Form.Label>
               <Form.Control
+                className={styles['form-control']}
                 name="title"
                 type="text"
                 maxLength="55"
@@ -78,8 +101,9 @@ const NewAchievementForm = ({memberId}) => {
 
           <Col>
             <Form.Group className="mb-3" controlId="description">
-              <Form.Label>Details</Form.Label>
+              <Form.Label className={styles['form-label']}>Details</Form.Label>
               <Form.Control
+                className={styles['form-control']}
                 name="description"
                 as="textarea"
                 rows={2}
@@ -97,8 +121,9 @@ const NewAchievementForm = ({memberId}) => {
         <Row>
           <Col>
             <Form.Group className="mb-3" controlId="image">
-              <Form.Label>Add Image</Form.Label>
+              <Form.Label className={styles['form-label']}>Add Image</Form.Label>
               <Form.Control
+                className={styles['form-control']}
                 name="image"
                 type="file"
                 onChange={handleChange}
@@ -110,7 +135,7 @@ const NewAchievementForm = ({memberId}) => {
 
         <div style={{ textAlign: "center" }}>
           <Button
-            className="achievementFormSubmit"
+            className={styles['achievementFormSubmit']}
             variant="primary"
             type="submit"
           >

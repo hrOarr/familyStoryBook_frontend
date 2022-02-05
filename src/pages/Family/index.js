@@ -6,7 +6,7 @@ import { Button } from "react-bootstrap";
 import MemberBasicInfoModal from "../../components/memberBasicInfoModal";
 import AddMemberModal from "../../components/addMemberModal";
 import AddRootButton from "../../components/addRootMember";
-import { useAuthState } from "../../Context";
+import { useAuthState } from "../../Context/AuthContext";
 import { TailSpin } from "react-loader-spinner";
 import { useAlert } from 'react-alert';
 import "./index.css";
@@ -90,7 +90,6 @@ const FamilyTree = () => {
       y: 100,
     });
 
-    console.log(translate);
   }, []);
 
   return (
